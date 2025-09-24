@@ -14,6 +14,7 @@ data Exp a where
   Minus  :: Exp Int -> Exp Int -> Exp Int
   Times  :: Exp Int -> Exp Int -> Exp Int
   Div    :: Exp Int -> Exp Int -> Exp Int
+  VarInc :: Variable -> Exp Int
 
   -- Expresiones booleanas
   BTrue  :: Exp Bool
@@ -41,5 +42,29 @@ data Comm
 
 pattern IfThen :: Exp Bool -> Comm -> Comm
 pattern IfThen b c = IfThenElse b c Skip
+
+
+-- Ver este ejercicio:
+
+toCase :: [(Exp Bool, Comm)] -> Comm
+toCase  [] = Skip
+toCase  ((b, c):xs) = IfThenElse b c (toCase xs)
+
+
+fromCase :: Comm -> Maybe [(Exp Bool, Comm)]
+fromCase Skip = Just []
+fromCase (IfThenElse b comm1 Skip)  = Just [(b,comm1)]
+fromCase (IfThenElse b comm1 comm2) = 
+  case fromCase commm2 of
+    Just case1 -> Just (b,comm1): case1
+    Nothing -> Nothing
+fromCase _ = Nothing
+
+
+-- Esta parte es la que no entiendo, la copie del paper
+pattern Case :: [(Exp Bool, Comm)] -> Comm
+pattern Case xs <- (fromCase -> Just xs)
+  where
+    Case xs = toCase xs
 
 data Error = DivByZero | UndefVar deriving (Eq, Show)
