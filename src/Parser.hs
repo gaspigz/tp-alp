@@ -55,7 +55,7 @@ intexp = additive
 
 -- Nivel más bajo de precedencia: + y -
 additive :: Parser (Exp Int)
-additive = chainl1 multiplicative plusminus
+additive = chainl1 multdiv plusminus
   where
     plusminus = do reservedOp lis "+"
                    return Plus
@@ -63,8 +63,8 @@ additive = chainl1 multiplicative plusminus
                    return Minus
 
 -- Nivel medio de precedencia: * y /
-multiplicative :: Parser (Exp Int)
-multiplicative = chainl1 unary timesdiv
+multdiv :: Parser (Exp Int)
+multdiv = chainl1 unary timesdiv
   where
     timesdiv = do reservedOp lis "*"
                   return Times
@@ -77,7 +77,7 @@ unary = uminus <|> primary
 
 uminus :: Parser (Exp Int)
 uminus = do reservedOp lis "-"
-            expr <- unary  -- Recursión sobre unary, no intexp
+            expr <- unary  
             return $ UMinus expr
 
 -- Términos básicos (números, variables, expresiones entre paréntesis)
@@ -90,7 +90,7 @@ primary = nat
 -- Parser para números naturales
 nat :: Parser (Exp Int)
 nat = do n <- integer lis
-         return (Const (fromIntegral n))  
+         return (Const (fromIntegral n))  -- Conversión explícita si es necesaria
 
 varInc :: Parser (Exp Int)
 varInc = try $ do  
@@ -169,31 +169,31 @@ comm = chainl1 simpleComm seqOp
 
 simpleComm :: Parser Comm
 simpleComm = parens lis comm 
-         <|> pSkip  
-         <|> pAssign 
-         <|> pIf 
-         <|> pRepeat
-         <|> pCase
+         <|> parseSkip  
+         <|> parseAssign 
+         <|> parseIf 
+         <|> parseRepeat
+         <|> parseCase
 
 seqOp :: Parser (Comm -> Comm -> Comm)
 seqOp = do
   reservedOp lis ";"
   return Seq
 
-pSkip :: Parser Comm
-pSkip = do
+parseSkip :: Parser Comm
+parseSkip = do
   reserved lis "skip"
   return Skip
 
-pAssign :: Parser Comm
-pAssign = do
+parseAssign :: Parser Comm
+parseAssign = do
   x <- identifier lis
   reservedOp lis "="
   exp <- intexp
   return (Let x exp)
 
-pIf :: Parser Comm
-pIf = do
+parseIf :: Parser Comm
+parseIf = do
   reserved lis "if"
   b <- boolexp
   reservedOp lis "{"
@@ -209,8 +209,8 @@ rest b c = do
   reservedOp lis "}"
   return (IfThenElse b c c1)
 
-pRepeat :: Parser Comm
-pRepeat = do
+parseRepeat :: Parser Comm
+parseRepeat = do
   reserved lis "repeat"
   reservedOp lis "{"
   c <- comm
@@ -220,8 +220,8 @@ pRepeat = do
   return (RepeatUntil c b)
 
 -- Parser para comando case usando Pattern Synonym
-pCase :: Parser Comm
-pCase = do
+parseCase :: Parser Comm
+parseCase = do
   reserved lis "case"
   reservedOp lis "{"
   alternatives <- many caseAlternative
