@@ -90,7 +90,7 @@ primary = nat
 -- Parser para números naturales
 nat :: Parser (Exp Int)
 nat = do n <- integer lis
-         return (Const (fromIntegral n))  -- Conversión explícita si es necesaria
+         return (Const (fromIntegral n))  
 
 varInc :: Parser (Exp Int)
 varInc = try $ do  
