@@ -1,3 +1,6 @@
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE ViewPatterns #-} -- Agrego esto porque tira error y warnings
+{-# LANGUAGE GADTs #-}
 module AST where
 
 -- Identificadores de Variable
@@ -55,8 +58,8 @@ fromCase :: Comm -> Maybe [(Exp Bool, Comm)]
 fromCase Skip = Just []
 fromCase (IfThenElse b comm1 Skip)  = Just [(b,comm1)]
 fromCase (IfThenElse b comm1 comm2) = 
-  case fromCase commm2 of
-    Just case1 -> Just (b,comm1): case1
+  case fromCase comm2 of
+    Just case1 -> Just ((b,comm1): case1)
     Nothing -> Nothing
 fromCase _ = Nothing
 

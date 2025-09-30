@@ -1,3 +1,5 @@
+{-# LANGUAGE GADTs #-}
+
 module Eval2
   ( eval
   , State
@@ -14,17 +16,19 @@ type State = M.Map Variable Int
 -- Estado vacío
 -- Completar la definición
 initState :: State
-initState = undefined
+initState = M.empty
 
 -- Busca el valor de una variable en un estado
 -- Completar la definición
 lookfor :: Variable -> State -> Either Error Int
-lookfor = undefined
+lookfor v s = case M.lookup v s of
+                Just n  -> Right n
+                Nothing -> Left UndefVar
 
 -- Cambia el valor de una variable en un estado
 -- Completar la definición
 update :: Variable -> Int -> State -> State
-update = undefined
+update = M.insert
 
 -- Evalúa un programa en el estado vacío
 eval :: Comm -> Either Error State
@@ -41,9 +45,105 @@ stepCommStar c    s = do
 -- Evalúa un paso de un comando en un estado dado
 -- Completar la definición
 stepComm :: Comm -> State -> Either Error (Pair Comm State)
-stepComm = undefined
+stepComm Skip s = Right (Skip :!: s)
+
+stepComm (Let var e) s = do
+  (n :!: s') <- evalExp e s
+  Right (Skip :!: update var n s')
+
+stepComm (Seq Skip c2) s = Right (c2 :!: s)
+stepComm (Seq c1 c2) s = do
+  (c1' :!: s') <- stepComm c1 s
+  Right (Seq c1' c2 :!: s')
+
+stepComm (IfThenElse b c1 c2) s = do
+  (bool :!: s') <- evalExp b s
+  if bool then Right (c1 :!: s')
+          else Right (c2 :!: s')
+
+stepComm (RepeatUntil c e) s = Right (Seq c (IfThenElse e Skip (RepeatUntil c e)) :!: s)
+
 
 -- Evalúa una expresión
 -- Completar la definición
 evalExp :: Exp a -> State -> Either Error (Pair a State)
-evalExp = undefined
+evalExp (Const n) s = Right (n :!: s)
+
+evalExp (Var v) s = do
+  n <- lookfor v s
+  Right (n :!: s)
+
+evalExp (UMinus exp) s = do
+  (n :!: s') <- evalExp exp s
+  Right (-n :!: s')
+
+evalExp (Plus   x y) s = do
+  (n1 :!: s' ) <- evalExp x s
+  (n2 :!: s'') <- evalExp y s'
+  Right (n1 + n2 :!: s'')
+
+evalExp (Minus  x y) s = do
+  (n1 :!: s') <- evalExp x s
+  (n2 :!:s'') <- evalExp y s'
+  Right (n1 - n2 :!: s'')
+
+evalExp (Times  x y) s = do
+  (n1 :!:  s') <- evalExp x s
+  (n2 :!: s'') <- evalExp y s'
+  Right (n1 * n2 :!: s'')
+
+evalExp (Div x y) s = do
+  (n1 :!: s' ) <- evalExp x s
+  (n2 :!: s'') <- evalExp y s'
+  if n2 == 0 then Left DivByZero
+               else Right ((n1 `div` n2) :!: s'')
+
+evalExp (VarInc v) s = do
+  n <- lookfor v s
+  let s' = update v (n+1) s
+  Right ((n + 1) :!: s')
+
+
+evalExp BTrue s = Right (True :!: s)
+
+evalExp BFalse s = Right (False :!: s)
+
+evalExp (Lt x y) s =  do
+  (n1 :!: s') <- evalExp x s
+  (n2 :!: s'') <- evalExp y s'
+  Right (if n1 < n2 then True :!: s''
+                    else False :!: s'')
+evalExp (Gt x y) s =  do
+  (n1 :!: s') <- evalExp x s
+  (n2 :!: s'') <- evalExp y s'
+  Right (if n1 > n2 then True :!: s''
+                    else False :!: s'')
+
+evalExp (And x y) s =  do
+  (n1 :!: s') <- evalExp x s
+  (n2 :!: s'') <- evalExp y s'
+  Right (if n1 && n2 then True :!: s''
+                    else False :!: s'')
+
+evalExp (Or x y) s =  do
+  (n1 :!: s') <- evalExp x s
+  (n2 :!: s'') <- evalExp y s'
+  Right (if n1 || n2 then True :!: s''
+                    else False :!: s'')
+
+evalExp (Not x) s = do
+  (b1 :!: s') <- evalExp x s
+  Right (if b1 then False :!: s'
+               else True :!: s')
+
+evalExp (Eq x y) s =  do
+  (n1 :!: s') <- evalExp x s
+  (n2 :!: s'') <- evalExp y s'
+  Right (if n1 == n2 then True :!: s''
+                    else False :!: s'')
+
+evalExp (NEq x y) s =  do
+  (n1 :!: s') <- evalExp x s
+  (n2 :!: s'') <- evalExp y s'
+  Right (if n1 /= n2 then True :!: s''
+                     else False :!: s'')

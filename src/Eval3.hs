@@ -14,22 +14,24 @@ type State = (M.Map Variable Int, String)
 -- Estado vacío
 -- Completar la definición
 initState :: State
-initState = undefined
+initState = (M.empty, "")
 
 -- Busca el valor de una variable en un estado
 -- Completar la definición
 lookfor :: Variable -> State -> Either Error Int
-lookfor = undefined
+lookfor v (s, _) = case M.lookup v s of
+                Just n  -> Right n
+                Nothing -> Left UndefVar
 
 -- Cambia el valor de una variable en un estado
 -- Completar la definición
 update :: Variable -> Int -> State -> State
-update = undefined
+update v n (m, tr) = (M.insert v n m, tr)
 
 -- Agrega una traza dada al estado
 -- Completar la definición
 addTrace :: String -> State -> State
-addTrace = undefined
+addTrace str (s, tr) = (s, tr ++ str ++ " ")
 
 -- Evalúa un programa en el estado vacío
 eval :: Comm -> Either Error State
@@ -46,9 +48,17 @@ stepCommStar c    s = do
 -- Evalúa un paso de un comando en un estado dado
 -- Completar la definición
 stepComm :: Comm -> State -> Either Error (Pair Comm State)
-stepComm = undefined
+stepComm Skip st = Right (Skip :!: st) 
+
+stepComm (Let var e) st = do
+  (n :!: st') <- evalExp e st
+  let st'' = update var n st'
+  let st''' = addTrace ("Let " ++ var ++ " " ++ show n) st''
+  return (Skip :!: st'')
 
 -- Evalúa una expresión
 -- Completar la definición
 evalExp :: Exp a -> State -> Either Error (Pair a State)
 evalExp = undefined
+
+
