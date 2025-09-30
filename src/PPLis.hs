@@ -1,3 +1,4 @@
+{-# LANGUAGE GADTs #-} -- Lo agregamos por las pExp, linea 16 
 {-# OPTIONS_GHC  -Wno-overlapping-patterns #-}
 
 module PPLis where
@@ -29,9 +30,8 @@ pExp (Gt  a b)   = pExp a <+> text ">" <+> pExp b
 pExp (And a b)   = pExp a <+> text "&&" <+> pExp b
 pExp (Or  a b)   = pExp a <+> text "||" <+> pExp b
 pExp (Not b  )   = text "!" <+> pExp b
-pExp _ =
-  error
-    "El Pretty Printer no está implementado para las extensiones del Ejercicio 1."
+pExp (VarInc x)  = pVar x <+> text "++" 
+pExp _ = error
 
 pExpMaybeParen :: Exp a -> Doc
 pExpMaybeParen e@(Plus _ _)  = parens (pExp e)
@@ -56,7 +56,13 @@ pComm (IfThenElse b c1 c2) =
     $$  rbrace
 pComm (RepeatUntil c b) =
   text "repeat" <+> lbrace $$ nest tabW (pComm c) $$ rbrace <+> text "until" <+> parens (pExp b)
-  
+
+pComm (Case xs) = text "case" <+> lbrace <+> pCaseAux xs <+> rbrace
+
+pCaseAux :: [(Exp Bool, Comm)] -> Doc
+pCaseAux [] = empty
+pCaseAux ((b, c):xs) = pExp b <+> text " : " <+> lbrace <+> pComm c <+> rbrace $$ pCaseAux xs 
+
 renderComm :: Comm -> String
 renderComm = render . pComm
 

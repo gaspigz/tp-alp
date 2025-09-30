@@ -121,13 +121,13 @@ andExpr = chainl1 compExpr andOp
                    return And
 
 -- acá va la comparación numérica y NOT
-compExpr :: Parser (Exp Bool)
+compExpr :: Parser (Exp Bool) 
 compExpr = notExpr
 
-notExpr :: Parser (Exp Bool)
+notExpr :: Parser (Exp Bool) 
 notExpr =  notOp <|> compTerm
   where notOp = do reservedOp lis "!"
-                   expr <- compTerm
+                   expr <- notExpr
                    return (Not expr)
 
 numComp :: Parser (Exp Bool)
@@ -199,7 +199,7 @@ parseIf = do
   reservedOp lis "{"
   c <- comm
   reservedOp lis "}"
-  rest b c <|> return (IfThenElse b c Skip)
+  rest b c <|> return (IfThen b c )
 
 rest :: (Exp Bool) -> Comm -> Parser Comm
 rest b c = do
@@ -226,15 +226,15 @@ parseCase = do
   reservedOp lis "{"
   alternatives <- many caseAlternative
   reservedOp lis "}"
-  return (Case alternatives)  -- Usar el Pattern Synonym del módulo AST
+  return (Case alternatives)  -- Uso el Pattern Synonym (ej2) 
   where
     caseAlternative = do
-      condition <- boolexp
+      b <- boolexp
       reservedOp lis ":"
       reservedOp lis "{"
-      command <- comm
+      c <- comm
       reservedOp lis "}"
-      return (condition, command)
+      return (b, c)
 
 ------------------------------------
 -- Función de parseo

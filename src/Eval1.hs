@@ -1,3 +1,5 @@
+{-# LANGUAGE GADTs #-}
+
 module Eval1
   ( eval
   , State
@@ -59,7 +61,7 @@ stepComm c s = case c of
 -- Evalúa una expresión
 -- Completar la definición
 evalExp :: Exp a -> State -> Pair a State
-  evalExp c s = case c of
+evalExp c s = case c of
 
   Const n -> n :!: s 
   
