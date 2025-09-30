@@ -31,7 +31,7 @@ pExp (And a b)   = pExp a <+> text "&&" <+> pExp b
 pExp (Or  a b)   = pExp a <+> text "||" <+> pExp b
 pExp (Not b  )   = text "!" <+> pExp b
 pExp (VarInc x)  = pVar x <+> text "++" 
-pExp _ = error
+-- pExp _ = error
 
 pExpMaybeParen :: Exp a -> Doc
 pExpMaybeParen e@(Plus _ _)  = parens (pExp e)

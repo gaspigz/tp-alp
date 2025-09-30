@@ -199,7 +199,7 @@ parseIf = do
   reservedOp lis "{"
   c <- comm
   reservedOp lis "}"
-  rest b c <|> return (IfThen b c )
+  rest b c <|> return (IfThenElse b c Skip)
 
 rest :: (Exp Bool) -> Comm -> Parser Comm
 rest b c = do
@@ -254,3 +254,4 @@ testComm s = parseComm "" s
 -- testComm "repeat { x = x + 1 } until (x > 10)"
 -- testComm "case { x == 5 : { x = 10 } x < 7 : { x = 100 } }"
 
+  

@@ -1,0 +1,28 @@
+/home/guille/.ghcup/ghc/9.6.6/lib/ghc-9.6.6/lib/x86_64-linux-ghc-9.6.6/rts-1.0.2/include/ghcversion.h:
+  hash: 9032f6afc97dcddfe8c8b306639eb6f456e3f6667f3dd8268681f51bb77c8634
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/.stack-work/dist/x86_64-linux/ghc-9.6.6/build/autogen/Paths_TP1.hs:
+  hash: 07c903b6858e643f515e545f49de51d022e877b125bcf36964b802efddbd4463
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/.stack-work/dist/x86_64-linux/ghc-9.6.6/build/autogen/cabal_macros.h:
+  hash: 4bb6cbb411274b92b52cb51fa4efa38df997b5004f28cc223b55a4ce32d538fe
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/CHANGELOG.md:
+  hash: 4d3313936a46bb30918048b369fb6aa8d4103afefb7b7a48ffbfb0d9806f3d6b
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/README.md:
+  hash: 8c50b647de6f8d234b50e47ecee815c185818dff55a5323a08828dd22c247648
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/TP1.cabal:
+  hash: f15ad80637afff84b758a1e961622e513ea5e72203ddb625d63af412671e7ac2
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/package.yaml:
+  hash: 8f10c45f5cc8350b81b12753a629ffde2dbf8f9eb1eb715011e140e977b581d9
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/src/AST.hs:
+  hash: 4d9c25983eabb927276d2d973f3bc3d3118188d194e037b7ec8c210d0e0bd3f0
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/src/Eval1.hs:
+  hash: cbc417e9e382fbd0878d612ed4c07a93ff7d08a7155d9af5a3ebf768a16b81a7
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/src/Eval2.hs:
+  hash: 412a149caac2fda19592f1d96e981aa914acf499a7692bfac4208da499232e1a
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/src/Eval3.hs:
+  hash: bbd8d3474104e5e584b36fa637c8f4f85dbee9e6dc8105ba4ba357b32fef5a2d
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/src/PPLis.hs:
+  hash: fb284657f3a20654c9490e403ecce2a84358127806bf85535d8f549dd13f142f
+/mnt/c/Users/guile/Desktop/TPALP/tp-alp/src/Parser.hs:
+  hash: e740b69ff9b76be4b81de64e8de1b58d8c74584b96ac1b7a091848cdf7666506
+/usr/include/stdc-predef.h:
+  hash: 8db4f65e62cade8ae4d9b77960ee6aee093255acc1b637e3fb37d79179733b15
